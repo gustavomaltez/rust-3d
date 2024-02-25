@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-
 use crate::{animation::Animated, entity::EntityBundle};
 
 // Model -----------------------------------------------------------------------
@@ -57,21 +56,21 @@ fn initialize_player(mut commands: Commands, resources: Res<Resources>) {
 fn player_movement(
     time: Res<Time>,
     resources: Res<Resources>,
-    keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Player, &mut Transform, &mut Animated)>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut query: Query<(&mut Transform, &mut Animated), With<Player>>,
 ) {
-    for (_, mut transform, mut animated) in query.iter_mut() {
+    for (mut transform, mut animated) in query.iter_mut() {
         let mut translation = Vec3::ZERO;
-        if keyboard_input.pressed(KeyCode::W) {
+        if keyboard_input.pressed(KeyCode::KeyW) {
             translation += Vec3::Z;
         }
-        if keyboard_input.pressed(KeyCode::S) {
+        if keyboard_input.pressed(KeyCode::KeyS) {
             translation -= Vec3::Z;
         }
-        if keyboard_input.pressed(KeyCode::A) {
+        if keyboard_input.pressed(KeyCode::KeyA) {
             translation -= Vec3::X;
         }
-        if keyboard_input.pressed(KeyCode::D) {
+        if keyboard_input.pressed(KeyCode::KeyD) {
             translation += Vec3::X;
         }
         if translation != Vec3::ZERO {

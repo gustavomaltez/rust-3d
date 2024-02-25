@@ -24,7 +24,7 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Gus game".into(),
+                title: "Genesys".into(),
                 mode: WindowMode::Windowed,
                 present_mode: PresentMode::AutoVsync,
                 position: WindowPosition::Centered(MonitorSelection::Index(0)),
@@ -33,10 +33,6 @@ fn main() {
             }),
             ..default()
         }),))
-        .insert_resource(AmbientLight {
-            color: Color::default(),
-            brightness: 0.75,
-        })
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
