@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 
 #[derive(Component)]
@@ -18,7 +20,9 @@ fn play_animation(mut players: Query<&mut AnimationPlayer>, animations: Query<&A
         for animation in animations.iter() {
             if !player.is_playing_clip(&animation.handle) {
                 println!("Playing animation {:?}", animation.handle);
-                player.play(animation.handle.clone());
+                player
+                    .play_with_transition(animation.handle.clone(), Duration::from_millis(250))
+                    .repeat();
             }
         }
     }
