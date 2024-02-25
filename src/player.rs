@@ -1,9 +1,4 @@
-use bevy::{
-    prelude::*,
-    input::{
-        mouse::{MouseButtonInput, MouseMotion},
-    },
-};
+use bevy::prelude::*;
 
 use crate::{animation::Animated, entity::EntityBundle};
 
@@ -62,33 +57,50 @@ fn initialize_player(mut commands: Commands, resources: Res<Resources>) {
 fn player_movement(
     time: Res<Time>,
     resources: Res<Resources>,
-    mut mouse_motion_events: EventReader<MouseMotion>,
     mut cursor_moved_events: EventReader<CursorMoved>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Transform, &mut Animated), With<Player>>,
+    camera_query: Query<(&Camera, &GlobalTransform)>,
+    mut query: Query<(&GlobalTransform, &mut Transform, &mut Animated), With<Player>>,
 ) {
-    for event in cursor_moved_events.read() {
-        info!("{:?}", event.position);
-    }
-    for (mut transform, mut animated) in query.iter_mut() {
-        let mut translation = Vec3::ZERO;
+    let (camera, camera_transform) = camera_query.single();
+
+    for (global_transform, mut transform, mut animated) in query.iter_mut() {
+        let mut direction = Vec3::ZERO;
+
+        for event in cursor_moved_events.read() {
+            let cursor_position = event.position;
+
+            if let Some(ray) = camera.viewport_to_world(camera_transform, cursor_position) {
+                if let Some(distance) = ray.intersect_plane(
+                    global_transform.translation(),
+                    Plane3d::new(global_transform.up()),
+                ) {
+                    let point = ray.get_point(distance);
+                    direction = point - global_transform.translation();
+
+                    // Use correct method for quaternion creation
+                    let rotation = Quat::from_axis_angle(Vec3::Y, direction.x.atan2(direction.z));
+                    transform.rotation = rotation;
+                }
+            }
+        }
+
+        println!("Direction: {:?} {:?}", direction.x, direction.z);
+
         if keyboard_input.pressed(KeyCode::KeyW) {
-            translation += Vec3::Z;
+            transform.translation += direction * time.delta_seconds();
+        } else if keyboard_input.pressed(KeyCode::KeyS) {
+            transform.translation -= direction * time.delta_seconds();
+        } else if keyboard_input.pressed(KeyCode::KeyA) {
+            transform.translation -= direction.cross(Vec3::Y) * time.delta_seconds();
+        } else if keyboard_input.pressed(KeyCode::KeyD) {
+            transform.translation += direction.cross(Vec3::Y) * time.delta_seconds();
         }
-        if keyboard_input.pressed(KeyCode::KeyS) {
-            translation -= Vec3::Z;
-        }
-        if keyboard_input.pressed(KeyCode::KeyA) {
-            translation -= Vec3::X;
-        }
-        if keyboard_input.pressed(KeyCode::KeyD) {
-            translation += Vec3::X;
-        }
-        if translation != Vec3::ZERO {
+
+        if direction != Vec3::ZERO {
             animated.handle = resources.animations.walk.clone();
         } else {
             animated.handle = resources.animations.idle.clone();
         }
-        transform.translation += translation * time.delta_seconds();
     }
 }
