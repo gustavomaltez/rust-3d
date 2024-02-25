@@ -1,4 +1,10 @@
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    input::{
+        mouse::{MouseButtonInput, MouseMotion},
+    },
+};
+
 use crate::{animation::Animated, entity::EntityBundle};
 
 // Model -----------------------------------------------------------------------
@@ -56,9 +62,14 @@ fn initialize_player(mut commands: Commands, resources: Res<Resources>) {
 fn player_movement(
     time: Res<Time>,
     resources: Res<Resources>,
+    mut mouse_motion_events: EventReader<MouseMotion>,
+    mut cursor_moved_events: EventReader<CursorMoved>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Transform, &mut Animated), With<Player>>,
 ) {
+    for event in cursor_moved_events.read() {
+        info!("{:?}", event.position);
+    }
     for (mut transform, mut animated) in query.iter_mut() {
         let mut translation = Vec3::ZERO;
         if keyboard_input.pressed(KeyCode::KeyW) {

@@ -14,6 +14,7 @@ use bevy::{
 
 use animation::AnimationPlugin;
 use asset_loader::AssetLoaderPlugin;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
 use light::LightPlugin;
 use movement::MovementPlugin;
@@ -33,6 +34,7 @@ fn main() {
             }),
             ..default()
         }),))
+        .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
