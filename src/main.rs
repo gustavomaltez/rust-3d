@@ -1,22 +1,24 @@
+mod animation;
 mod asset_loader;
-mod entity;
 mod camera;
+mod entity;
 mod light;
+mod movement;
 mod player;
 mod world;
-mod movement;  
 
 use bevy::{
     prelude::*,
     window::{MonitorSelection, PresentMode, WindowMode, WindowPosition, WindowResolution},
 };
 
+use animation::AnimationPlugin;
 use asset_loader::AssetLoaderPlugin;
 use camera::CameraPlugin;
 use light::LightPlugin;
+use movement::MovementPlugin;
 use player::PlayerPlugin;
 use world::WorldPlugin;
-use movement::MovementPlugin;
 
 fn main() {
     App::new()
@@ -41,5 +43,6 @@ fn main() {
         .add_plugins(PlayerPlugin)
         .add_plugins(WorldPlugin)
         .add_plugins(MovementPlugin)
+        .add_plugins(AnimationPlugin)
         .run();
 }
