@@ -19,7 +19,6 @@ fn play_animation(mut players: Query<&mut AnimationPlayer>, animations: Query<&A
     for mut player in players.iter_mut() {
         for animation in animations.iter() {
             if !player.is_playing_clip(&animation.handle) {
-                println!("Playing animation {:?}", animation.handle);
                 player
                     .play_with_transition(animation.handle.clone(), Duration::from_millis(250))
                     .repeat();
