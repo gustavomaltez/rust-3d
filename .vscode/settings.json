@@ -1,4 +1,8 @@
 {
+  "editor.formatOnSave": true,
   "rust-analyzer.checkOnSave": false,
-  "rust-analyzer.cargo-watch.enable": true
+  "rust-analyzer.cargo-watch.enable": true,
+  "rust-analyzer.linkedProjects": [
+    ".\\Cargo.toml"
+  ]
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{animation::Animated, entity::EntityBundle, input::InputData};
+use crate::{animation::Animated, input::InputData, oentity::EntityBundle};
 
 // Model -----------------------------------------------------------------------
 
@@ -37,17 +37,17 @@ impl Plugin for PlayerPlugin {
 
 fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>) {
     *resources = Resources {
-        model: asset_server.load("models/Skeleton.glb#Scene0"),
+        model: asset_server.load("models/player.glb#Scene0"),
         animations: Animations {
-            idle: asset_server.load("models/Skeleton.glb#Animation3"),
-            walk: asset_server.load("models/Skeleton.glb#Animation6"),
+            idle: asset_server.load("models/player.glb#Animation3"),
+            walk: asset_server.load("models/player.glb#Animation6"),
         },
     };
 }
 
 fn initialize_player(mut commands: Commands, resources: Res<Resources>) {
     commands.spawn((
-        EntityBundle::new(resources.model.clone(), 0.0, 1.0, 0.0),
+        EntityBundle::new(resources.model.clone(), IVec3::new(0, 1, 0)),
         Animated {
             handle: resources.animations.idle.clone(),
         },
@@ -67,34 +67,35 @@ fn player_movement(
         let angle = f32::atan2(difference.x, difference.z);
         transform.rotation = Quat::from_rotation_y(angle);
 
-        // Move the player to the direction the player is looking at
-        // W -> Forward | S -> Backward | A -> Left | D -> Right
+        // Move the player based on pressed keys
         let rotation = transform.rotation.clone();
-        let speed_offset = time.delta_seconds() * 2.5;
+
+        let mut translation_offset = Vec3::ZERO;
         let mut is_walking = false;
 
-        if input_data.pressed_keys.contains(&KeyCode::KeyW) {
-            is_walking = true;
-            transform.translation += rotation.mul_vec3(Vec3::Z) * speed_offset
-        }
-        if input_data.pressed_keys.contains(&KeyCode::KeyS) {
-            is_walking = true;
-            transform.translation -= rotation.mul_vec3(Vec3::Z) * speed_offset;
-        }
-        if input_data.pressed_keys.contains(&KeyCode::KeyA) {
-            is_walking = true;
-            transform.translation += rotation.mul_vec3(Vec3::X) * speed_offset;
-        }
-        if input_data.pressed_keys.contains(&KeyCode::KeyD) {
-            is_walking = true;
-            transform.translation -= rotation.mul_vec3(Vec3::X) * speed_offset;
+        match input_data.pressed_keys.iter().next() {
+            Some(key) => {
+                is_walking = true;
+                match key {
+                    KeyCode::KeyW => translation_offset += rotation.mul_vec3(Vec3::Z),
+                    KeyCode::KeyS => translation_offset -= rotation.mul_vec3(Vec3::Z),
+                    KeyCode::KeyA => translation_offset += rotation.mul_vec3(Vec3::X),
+                    KeyCode::KeyD => translation_offset -= rotation.mul_vec3(Vec3::X),
+                    _ => {}
+                }
+            }
+            _ => {}
         }
 
+        // Update translation
+        let speed_offset = time.delta_seconds() * 5.5;
+        transform.translation += translation_offset * speed_offset;
+
         // Play the walk animation
-        if is_walking {
-            animated.handle = resources.animations.walk.clone();
+        animated.handle = if is_walking {
+            resources.animations.walk.clone()
         } else {
-            animated.handle = resources.animations.idle.clone();
-        }
+            resources.animations.idle.clone()
+        };
     }
 }

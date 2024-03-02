@@ -1,12 +1,13 @@
 mod animation;
-mod asset_loader;
 mod camera;
-mod entity;
+mod debug;
+
+mod entities;
+mod input;
 mod light;
 mod movement;
+mod oentity;
 mod player;
-mod world;
-mod input;
 
 use bevy::{
     prelude::*,
@@ -14,14 +15,14 @@ use bevy::{
 };
 
 use animation::AnimationPlugin;
-use asset_loader::AssetLoaderPlugin;
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
+// use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
+use debug::DebugPlugin;
+use entities::EntityPlugin;
+use input::InputPlugin;
 use light::LightPlugin;
 use movement::MovementPlugin;
 use player::PlayerPlugin;
-use world::WorldPlugin;
-use input::InputPlugin;
 
 // ToDo:
 // -> Retire world.rs and asset_loader.rs (create a logic to spawn blocks)
@@ -44,13 +45,13 @@ fn main() {
             ..default()
         }),))
         // .add_plugins(WorldInspectorPlugin::new())
-        .add_plugins(AssetLoaderPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
         .add_plugins(PlayerPlugin)
-        .add_plugins(WorldPlugin)
+        .add_plugins(EntityPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(AnimationPlugin)
+        .add_plugins(DebugPlugin)
         .add_plugins(InputPlugin)
         .run();
 }

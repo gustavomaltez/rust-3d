@@ -21,10 +21,8 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
-        Self {
-            value: Vec3::new(x, y, z),
-        }
+    pub fn new(value: Vec3) -> Self {
+        Self { value }
     }
 }
 

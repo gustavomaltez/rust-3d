@@ -35,9 +35,7 @@ fn spawn_light(mut commands: Commands) {
     ));
 }
 
-fn rotate_light(
-    mut query: Query<(&SunMoonLight, &mut Transform,)>
-) {
+fn rotate_light(mut query: Query<(&SunMoonLight, &mut Transform)>) {
     for (_, mut transform) in query.iter_mut() {
         transform.rotate(Quat::from_rotation_y(-1.0_f32.to_radians()));
     }
