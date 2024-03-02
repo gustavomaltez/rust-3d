@@ -6,6 +6,7 @@ mod light;
 mod movement;
 mod player;
 mod world;
+mod input;
 
 use bevy::{
     prelude::*,
@@ -20,6 +21,7 @@ use light::LightPlugin;
 use movement::MovementPlugin;
 use player::PlayerPlugin;
 use world::WorldPlugin;
+use input::InputPlugin;
 
 // ToDo:
 // -> Retire world.rs and asset_loader.rs (create a logic to spawn blocks)
@@ -41,7 +43,7 @@ fn main() {
             }),
             ..default()
         }),))
-        .add_plugins(WorldInspectorPlugin::new())
+        // .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
@@ -49,5 +51,6 @@ fn main() {
         .add_plugins(WorldPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(AnimationPlugin)
+        .add_plugins(InputPlugin)
         .run();
 }
