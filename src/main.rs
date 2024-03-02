@@ -25,8 +25,8 @@ use input::InputPlugin;
 
 // ToDo:
 // -> Retire world.rs and asset_loader.rs (create a logic to spawn blocks)
-// -> Create a way to store the mouse position and share it with the player movement system
-// -> Create a way to store the keyboard input and share it with the player movement system
+// -> Add logic to only render the blocks that are visible to the camera
+// -> Fix issues on player rotation (it needs to always looks at the mouse)
 // -> Try to improve the day/night cycle
 
 fn main() {
