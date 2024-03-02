@@ -63,10 +63,8 @@ fn player_movement(
 ) {
     for (mut transform, mut animated) in query.iter_mut() {
         // Rotate the player to look at the mouse position
-        let angle = f32::atan2(
-            input_data.mouse_position.coordinates.x,
-            input_data.mouse_position.coordinates.z,
-        );
+        let difference = input_data.mouse_position.coordinates - transform.translation;
+        let angle = f32::atan2(difference.x, difference.z);
         transform.rotation = Quat::from_rotation_y(angle);
 
         // Move the player to the direction the player is looking at
