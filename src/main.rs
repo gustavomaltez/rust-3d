@@ -9,7 +9,7 @@ mod world;
 
 use bevy::{
     prelude::*,
-    window::{MonitorSelection, PresentMode, WindowMode, WindowPosition, WindowResolution},
+    window::{PresentMode, WindowLevel, WindowMode, WindowPosition, WindowResolution},
 };
 
 use animation::AnimationPlugin;
@@ -31,11 +31,12 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Genesys Ultimate".into(),
                 mode: WindowMode::Windowed,
+                title: "Genesys Ultimate".into(),
                 present_mode: PresentMode::AutoVsync,
-                position: WindowPosition::Centered(MonitorSelection::Index(0)),
-                resolution: WindowResolution::new(1400., 700.),
+                window_level: WindowLevel::AlwaysOnTop,
+                position: WindowPosition::At(IVec2::new(1710, 0)),
+                resolution: WindowResolution::new(850., 500.),
                 ..default()
             }),
             ..default()
