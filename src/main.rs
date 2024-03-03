@@ -8,6 +8,7 @@ mod light;
 mod movement;
 mod oentity;
 mod player;
+mod system_info;
 
 use bevy::{
     prelude::*,
