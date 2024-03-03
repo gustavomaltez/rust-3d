@@ -1,10 +1,4 @@
-use bevy_inspector_egui::egui::Memory;
-use nvml_wrapper::enum_wrappers::device::TemperatureSensor;
-use nvml_wrapper::enums::device::UsedGpuMemory;
-use nvml_wrapper::Device;
-use nvml_wrapper::Nvml;
-use std::time::Instant;
-use sysinfo::{Components, Disks, Networks, System};
+use nvml_wrapper::{enum_wrappers::device::TemperatureSensor, Nvml};
 
 pub struct CPUInfo {
     pub name: String,

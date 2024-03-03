@@ -5,6 +5,7 @@ mod block;
 mod vegetation;
 
 use block::*;
+use rand::Rng;
 use vegetation::*;
 
 // Components ------------------------------------------------------------------
@@ -55,24 +56,32 @@ fn spawn_entity<T: EntityVariant>(
 }
 
 fn initialize_world(mut commands: Commands, resources: Res<Resources>) {
-    for x in -10..10 {
-        for z in -10..10 {
-            spawn_entity(&mut commands, &resources, Block::Grass, IVec3::new(x, 0, z));
-            let spawn_corn = rand::random::<f32>() < 0.1;
-            if spawn_corn {
-                spawn_entity(
-                    &mut commands,
-                    &resources,
-                    Vegetation::Corn,
-                    IVec3::new(x, 1, z),
-                );
+    for x in -15..15 {
+        for z in -15..15 {
+            let spawn_dirt = rand::thread_rng().gen_bool(0.3);
+            if spawn_dirt {
+                spawn_entity(&mut commands, &resources, Block::Dirt, IVec3::new(x, 0, z));
             } else {
-                // spawn_entity(
-                //     &mut commands,
-                //     &resources,
-                //     Vegetation::Grass,
-                //     IVec3::new(x, 1, z),
-                // );
+                spawn_entity(&mut commands, &resources, Block::Grass, IVec3::new(x, 0, z));
+                let spawn_grass = rand::thread_rng().gen_bool(0.05);
+                if spawn_grass {
+                    spawn_entity(
+                        &mut commands,
+                        &resources,
+                        Vegetation::Grass,
+                        IVec3::new(x, 1, z),
+                    );
+                } else {
+                    let spawn_corn = rand::thread_rng().gen_bool(0.1);
+                    if spawn_corn {
+                        spawn_entity(
+                            &mut commands,
+                            &resources,
+                            Vegetation::Corn,
+                            IVec3::new(x, 1, z),
+                        );
+                    }
+                }
             }
         }
     }

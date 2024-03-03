@@ -11,7 +11,7 @@ impl Plugin for CameraPlugin {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
         projection: OrthographicProjection {
-            scale: 1.5,
+            scale: 2.0,
             scaling_mode: ScalingMode::FixedVertical(5.0),
             ..default()
         }

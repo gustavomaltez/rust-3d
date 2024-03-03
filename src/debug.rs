@@ -1,23 +1,12 @@
 use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
-    ecs::system,
-    log::tracing_subscriber::fmt::time,
     prelude::*,
 };
-
-use nvml_wrapper::enum_wrappers::device::TemperatureSensor;
-use nvml_wrapper::enums::device::UsedGpuMemory;
-use nvml_wrapper::Device;
-use nvml_wrapper::Nvml;
-use std::time::Instant;
-
-use sysinfo::{Components, Disks, Networks, System};
 
 use crate::{input::InputData, system_info::SystemInfo};
 
 pub struct DebugPlugin;
 
-// Create resource for system information
 #[derive(Resource)]
 pub struct SystemInfoData {
     pub info: SystemInfo,
@@ -44,7 +33,6 @@ impl Plugin for DebugPlugin {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    // Setup the log text sections
     let font = asset_server.load("fonts/FiraCode-Retina.ttf");
     let font_size = 18.0;
     let style = TextStyle {
