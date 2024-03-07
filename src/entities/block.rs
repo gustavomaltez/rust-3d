@@ -41,32 +41,20 @@ impl Facade {
         resources: &mut Resources,
         asset_server: &Res<AssetServer>,
     ) {
-        let model_data = get_variant_model(variant);
+        let model_data = get_variant_model_data(variant);
         let signature = get_model_signature(ENTITY_NAME, &model_data.id);
         load_model(signature, model_data.path, resources, asset_server);
     }
 
-    pub fn load_animation(
-        variant: &Variant,
-        animation: &Animation,
-        resources: &mut Resources,
-        asset_server: &Res<AssetServer>,
-    ) {
-        let model_data = get_variant_animation(variant, animation);
-        let model_signature = get_model_signature(ENTITY_NAME, &model_data.id);
-        let signature = get_animation_signature(model_signature.as_str(), &model_data.id);
-        load_animation(signature, model_data.path, resources, asset_server);
-    }
-
     pub fn get_model(variant: &Variant, resources: &Resources) -> Handle<Scene> {
-        let signature = get_model_signature(ENTITY_NAME, &get_variant_model(variant).id);
+        let signature = get_model_signature(ENTITY_NAME, &get_variant_model_data(variant).id);
         resources.models[&signature].clone()
     }
 }
 
 // Variants & Animations -------------------------------------------------------
 
-struct BlockData {
+struct Data {
     id: String,
     path: String,
 }
@@ -79,34 +67,15 @@ pub enum Variant {
     Dirt,
 }
 
-fn get_variant_model(variant: &Variant) -> BlockData {
+fn get_variant_model_data(variant: &Variant) -> Data {
     match variant {
-        Variant::Grass => BlockData {
+        Variant::Grass => Data {
             id: "grass".to_string(),
             path: "models/block_grass.glb#Scene0".to_string(),
         },
-        Variant::Dirt => BlockData {
+        Variant::Dirt => Data {
             id: "dirt".to_string(),
             path: "models/block_dirt.glb#Scene0".to_string(),
-        },
-    }
-}
-
-// Animation -----
-
-pub enum Animation {
-    Idle,
-}
-
-fn get_variant_animation(variant: &Variant, animation: &Animation) -> BlockData {
-    match (variant, animation) {
-        (Variant::Grass, Animation::Idle) => BlockData {
-            id: "idle".to_string(),
-            path: "models/block_grass.glb#Animation0".to_string(),
-        },
-        (Variant::Dirt, Animation::Idle) => BlockData {
-            id: "idle".to_string(),
-            path: "models/block_dirt.glb#Animation0".to_string(),
         },
     }
 }
@@ -114,10 +83,6 @@ fn get_variant_animation(variant: &Variant, animation: &Animation) -> BlockData 
 // External API ----------------------------------------------------------------
 
 pub fn load_assets(resources: &mut Resources, asset_server: &Res<AssetServer>) {
-    // Grass
     Facade::load_model(&Variant::Grass, resources, asset_server);
-    // Facade::load_animation(&Variant::Grass, &Animation::Idle, resources, asset_server);
-
-    // Dirt
     Facade::load_model(&Variant::Dirt, resources, asset_server);
 }

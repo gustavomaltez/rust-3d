@@ -1,31 +1,21 @@
 use bevy::prelude::*;
+use rand::Rng;
 use std::collections::HashMap;
 
 mod block;
 mod vegetation;
 
 use block::*;
-use rand::Rng;
 use vegetation::*;
 
-// Components ------------------------------------------------------------------
-
-#[derive(Component, Eq, PartialEq, Hash, Clone)]
-enum Entity {
-    Block(Block),
-    Vegetation(Vegetation),
-}
-
-trait EntityVariant {
-    fn spawn(&self, commands: &mut Commands, resources: &Res<Resources>, position: IVec3);
-}
-
-// Plugin ----------------------------------------------------------------------
+// Resources -------------------------------------------------------------------
 
 #[derive(Resource, Default)]
 pub struct Resources {
-    entities: HashMap<Entity, Handle<Scene>>,
+    models: HashMap<String, Handle<Scene>>,
 }
+
+// Plugin ----------------------------------------------------------------------
 
 pub struct EntityPlugin;
 
@@ -33,63 +23,57 @@ impl Plugin for EntityPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Resources>()
             .add_systems(Startup, load_assets)
-            .add_systems(PostStartup, initialize_world);
+            .add_systems(PostStartup, spawn_world);
     }
 }
 
 fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>) {
-    let models_to_load = block::MODELS.iter().chain(vegetation::MODELS.iter());
-    for (entity, path) in models_to_load {
-        resources
-            .entities
-            .insert(entity.clone(), asset_server.load(path.to_string()));
-    }
+    block::load_assets(&mut resources, &asset_server);
+    vegetation::load_assets(&mut resources, &asset_server);
 }
 
-fn spawn_entity<T: EntityVariant>(
-    commands: &mut Commands,
-    resources: &Res<Resources>,
-    entity: T,
-    position: IVec3,
-) {
-    entity.spawn(commands, resources, position);
-}
-
-fn initialize_world(mut commands: Commands, resources: Res<Resources>) {
+fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
     for x in -15..15 {
         for z in -15..15 {
-            let spawn_dirt = rand::thread_rng().gen_bool(0.3);
-            if spawn_dirt {
-                spawn_entity(&mut commands, &resources, Block::Dirt, IVec3::new(x, 0, z));
-            } else {
-                spawn_entity(&mut commands, &resources, Block::Grass, IVec3::new(x, 0, z));
-                let spawn_grass = rand::thread_rng().gen_bool(0.05);
-                if spawn_grass {
-                    spawn_entity(
-                        &mut commands,
-                        &resources,
-                        Vegetation::Grass,
-                        IVec3::new(x, 1, z),
-                    );
+            if rand::thread_rng().gen_bool(0.3) {
+                Block::new(block::Variant::Dirt, IVec3 { x, y: 0, z })
+                    .spawn(&mut commands, &resources);
+                if rand::thread_rng().gen_bool(0.5) {
+                    Vegetation::new(vegetation::Variant::Corn, IVec3 { x, y: 1, z })
+                        .spawn(&mut commands, &resources);
+                } else if rand::thread_rng().gen_bool(0.1) {
+                    Vegetation::new(vegetation::Variant::Tree, IVec3 { x, y: 1, z })
+                        .spawn(&mut commands, &resources);
                 } else {
-                    let spawn_corn = rand::thread_rng().gen_bool(0.1);
-                    if spawn_corn {
-                        spawn_entity(
-                            &mut commands,
-                            &resources,
-                            Vegetation::Corn,
-                            IVec3::new(x, 1, z),
-                        );
-                    }
+                    Vegetation::new(vegetation::Variant::Grass, IVec3 { x, y: 1, z })
+                        .spawn(&mut commands, &resources);
+                }
+            } else {
+                Block::new(block::Variant::Grass, IVec3 { x, y: 0, z })
+                    .spawn(&mut commands, &resources);
+                if rand::thread_rng().gen_bool(0.4) {
+                    Vegetation::new(vegetation::Variant::Grass, IVec3 { x, y: 1, z })
+                        .spawn(&mut commands, &resources);
                 }
             }
         }
     }
+}
 
-    spawn_entity(
-        &mut commands,
-        &resources,
-        Vegetation::Tree,
-        IVec3::new(5, 1, -2),
-    );
+// Entity Helpers --------------------------------------------------------------
+
+fn load_model(
+    signature: String,
+    path: String,
+    resources: &mut Resources,
+    asset_server: &Res<AssetServer>,
+) {
+    if resources.models.contains_key(&signature) {
+        panic!("Model already loaded: {}", signature);
+    }
+    resources.models.insert(signature, asset_server.load(path));
+}
+
+fn get_model_signature(entity: &str, variant: &str) -> String {
+    format!("{}_{}", entity, variant)
 }
