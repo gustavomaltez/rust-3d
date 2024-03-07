@@ -5,8 +5,6 @@ mod debug;
 mod entities;
 mod input;
 mod light;
-mod movement;
-mod oentity;
 mod player;
 mod system_info;
 
@@ -22,7 +20,6 @@ use debug::DebugPlugin;
 use entities::EntityPlugin;
 use input::InputPlugin;
 use light::LightPlugin;
-use movement::MovementPlugin;
 use player::PlayerPlugin;
 
 // ToDo:
@@ -33,7 +30,9 @@ use player::PlayerPlugin;
 // -> Add logic to only render the blocks that are visible to the camera
 // -> Fix issues on player rotation (it needs to always looks at the mouse)
 // -> Try to improve the day/night cycle
-// -> Check if is possible to work with hexagonal grids (performance, devcost, etc)
+// -> Improve abstraction to handle entities
+// -> Improve animation logic
+// -> Add logic to zoom in/out the camera with the mouse wheel
 // -> Improve system info logic (fail gracefully), handle AMD gpus.
 // To Run -> cargo watch -c -x run
 
@@ -56,7 +55,6 @@ fn main() {
         .add_plugins(LightPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(EntityPlugin)
-        .add_plugins(MovementPlugin)
         .add_plugins(AnimationPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(InputPlugin)

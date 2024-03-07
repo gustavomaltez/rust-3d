@@ -1,71 +1,14 @@
+use super::get_model as core_get_model;
 use super::*;
 
 // Core ------------------------------------------------------------------------
 
-#[derive(Component)]
-pub struct Vegetation {
+pub struct Entity {
     pub coordinates: IVec3,
     pub variant: Variant,
 }
 
-impl Vegetation {
-    pub fn new(variant: Variant, coordinates: IVec3) -> Self {
-        Self {
-            variant,
-            coordinates,
-        }
-    }
-
-    pub fn spawn(&self, commands: &mut Commands, resources: &Resources) {
-        commands.spawn(SceneBundle {
-            scene: Facade::get_model(&self.variant, &resources),
-            transform: Transform {
-                translation: Vec3 {
-                    x: self.coordinates.x as f32,
-                    y: self.coordinates.y as f32 - 0.5,
-                    z: self.coordinates.z as f32,
-                },
-                scale: Vec3::splat(0.5),
-                ..Default::default()
-            },
-            ..Default::default()
-        });
-    }
-}
-
-// Facade ----------------------------------------------------------------------
-
-const ENTITY_NAME: &str = "vegetation";
-
-struct Facade {}
-
-impl Facade {
-    pub fn load_model(
-        variant: &Variant,
-        resources: &mut Resources,
-        asset_server: &Res<AssetServer>,
-    ) {
-        let model_data = get_variant_model_data(variant);
-        let signature = get_model_signature(ENTITY_NAME, &model_data.id);
-        load_model(signature, model_data.path, resources, asset_server);
-    }
-
-    pub fn get_model(variant: &Variant, resources: &Resources) -> Handle<Scene> {
-        let signature = get_model_signature(ENTITY_NAME, &get_variant_model_data(variant).id);
-        resources.models[&signature].clone()
-    }
-}
-
-// Variants & Animations -------------------------------------------------------
-
-struct Data {
-    id: String,
-    path: String,
-}
-
-// Variant -----
-
-#[derive(Component)]
+#[derive(Component, PartialEq)]
 pub enum Variant {
     Bamboo,
     Corn,
@@ -73,32 +16,67 @@ pub enum Variant {
     Tree,
 }
 
-fn get_variant_model_data(variant: &Variant) -> Data {
-    match variant {
-        Variant::Grass => Data {
-            id: "grass".to_string(),
-            path: "models/vegetation_grass.glb#Scene0".to_string(),
+// Helpers ---------------------------------------------------------------------
+
+pub fn spawn(commands: &mut Commands, resources: &Resources, entity: Entity) {
+    commands.spawn(SceneBundle {
+        scene: get_model(&entity.variant, resources),
+        transform: Transform {
+            translation: Vec3::new(
+                entity.coordinates.x as f32,
+                entity.coordinates.y as f32 - 0.5,
+                entity.coordinates.z as f32,
+            ),
+            scale: Vec3::splat(0.5),
+            ..Default::default()
         },
-        Variant::Bamboo => Data {
-            id: "bamboo".to_string(),
-            path: "models/vegetation_bamboo.glb#Scene0".to_string(),
-        },
-        Variant::Tree => Data {
-            id: "tree".to_string(),
-            path: "models/vegetation_tree.glb#Scene0".to_string(),
-        },
-        Variant::Corn => Data {
-            id: "corn".to_string(),
-            path: "models/vegetation_corn.glb#Scene0".to_string(),
-        },
+        ..Default::default()
+    });
+}
+
+// Variants & Animations -------------------------------------------------------
+
+struct ModelData<'a> {
+    path: &'a str,
+    variant: Variant,
+}
+
+const MODELS: [ModelData; 4] = [
+    ModelData {
+        path: "models/vegetation_bamboo.glb#Scene0",
+        variant: Variant::Bamboo,
+    },
+    ModelData {
+        path: "models/vegetation_corn.glb#Scene0",
+        variant: Variant::Corn,
+    },
+    ModelData {
+        path: "models/vegetation_grass.glb#Scene0",
+        variant: Variant::Grass,
+    },
+    ModelData {
+        path: "models/vegetation_tree.glb#Scene0",
+        variant: Variant::Tree,
+    },
+];
+
+pub fn get_model(variant: &Variant, resources: &Resources) -> Handle<Scene> {
+    match MODELS.iter().find(|model| model.variant == *variant) {
+        Some(model) => core_get_model(model.path.to_string(), resources),
+        None => panic!("Error while loading model"),
     }
 }
 
-// External API ----------------------------------------------------------------
-
 pub fn load_assets(resources: &mut Resources, asset_server: &Res<AssetServer>) {
-    Facade::load_model(&Variant::Grass, resources, asset_server);
-    Facade::load_model(&Variant::Tree, resources, asset_server);
-    Facade::load_model(&Variant::Bamboo, resources, asset_server);
-    Facade::load_model(&Variant::Corn, resources, asset_server);
+    for model in MODELS.iter() {
+        load_model(model.path.to_string(), resources, asset_server);
+    }
+}
+
+// Exportable ------------------------------------------------------------------
+
+pub mod exportable {
+    pub use super::spawn;
+    pub use super::Entity;
+    pub use super::Variant;
 }

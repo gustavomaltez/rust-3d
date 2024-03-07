@@ -1,20 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{animation::Animated, input::InputData, oentity::EntityBundle};
-
-// Model -----------------------------------------------------------------------
-
-#[derive(Resource, Default)]
-struct Resources {
-    model: Handle<Scene>,
-    animations: Animations,
-}
-
-#[derive(Default)]
-struct Animations {
-    idle: Handle<AnimationClip>,
-    walk: Handle<AnimationClip>,
-}
+use crate::{
+    animation::Animated,
+    entities::entity::{character, Resources as EntityResources},
+    input::InputData,
+};
 
 // Component -------------------------------------------------------------------
 
@@ -27,37 +17,28 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Resources>()
-            .init_resource::<InputData>()
-            .add_systems(Startup, load_assets)
-            .add_systems(PostStartup, initialize_player)
+        app.add_systems(PostStartup, initialize_player)
             .add_systems(Update, player_movement);
     }
 }
 
-fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>) {
-    *resources = Resources {
-        model: asset_server.load("models/player.glb#Scene0"),
-        animations: Animations {
-            idle: asset_server.load("models/player.glb#Animation3"),
-            walk: asset_server.load("models/player.glb#Animation6"),
-        },
-    };
-}
+// Systems ---------------------------------------------------------------------
 
-fn initialize_player(mut commands: Commands, resources: Res<Resources>) {
-    commands.spawn((
-        EntityBundle::new(resources.model.clone(), IVec3::new(0, 1, 0)),
-        Animated {
-            handle: resources.animations.idle.clone(),
+fn initialize_player(mut commands: Commands, resources: Res<EntityResources>) {
+    character::spawn(
+        &mut commands,
+        &resources,
+        character::Entity {
+            coordinates: IVec3::new(0, 0, 0),
+            variant: character::Variant::Player,
         },
         Player,
-    ));
+    );
 }
 
 fn player_movement(
     time: Res<Time>,
-    resources: Res<Resources>,
+    resources: Res<EntityResources>,
     input_data: Res<InputData>,
     mut query: Query<(&mut Transform, &mut Animated), With<Player>>,
 ) {
@@ -93,9 +74,17 @@ fn player_movement(
 
         // Play the walk animation
         animated.handle = if is_walking {
-            resources.animations.walk.clone()
+            character::get_animation(
+                &character::Variant::Player,
+                &character::Animation::Walk,
+                &resources,
+            )
         } else {
-            resources.animations.idle.clone()
+            character::get_animation(
+                &character::Variant::Player,
+                &character::Animation::Idle,
+                &resources,
+            )
         };
     }
 }
