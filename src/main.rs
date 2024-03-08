@@ -22,16 +22,14 @@ use input::InputPlugin;
 use light::LightPlugin;
 use player::PlayerPlugin;
 
-// ToDo:
-
-// -> Add logic to enable/disable debug mode
-// -> Figure out a way to get processor temperature
-// -> Add logic to only render the blocks that are visible to the camera
-// -> Fix issues on player rotation (it needs to always looks at the mouse)
-// -> Try to improve the day/night cycle
+// ToDo (sorted by priority):
+// -> Render only visible blocks
 // -> Improve animation logic
-// -> Add logic to zoom in/out the camera with the mouse wheel
-// -> Improve system info logic (fail gracefully), handle AMD gpus.
+// -> Improve the day/night cycle
+// -> Fix issues on player rotation (it needs to always looks at the mouse)
+// -> Improve debug mode code (enable/disable)
+// -> Fix system info module (CPU usage is not accurate, CPU temp is missing, AMD gpus are not supported)
+// -> Improve camera (add zoom and movement)
 
 fn main() {
     App::new()
