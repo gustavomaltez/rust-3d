@@ -2,6 +2,7 @@ use bevy::{
     diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     prelude::*,
 };
+use bevy_async_task::{AsyncTaskRunner, AsyncTaskStatus};
 
 use crate::{input::InputData, system_info::SystemInfo};
 
@@ -26,6 +27,7 @@ impl Plugin for DebugPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(FrameTimeDiagnosticsPlugin)
             .add_systems(Update, update)
+            .add_systems(Update, refresh_system_info)
             .add_systems(Startup, setup)
             .init_resource::<InputData>()
             .init_resource::<SystemInfoData>();
@@ -55,6 +57,24 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     );
 }
 
+fn refresh_system_info(
+    mut system_info: ResMut<SystemInfoData>,
+    mut task_executor: AsyncTaskRunner<SystemInfo>,
+) {
+    match task_executor.poll() {
+        AsyncTaskStatus::Idle => {
+            if system_info.last_refresh.elapsed().as_secs() > 5 {
+                task_executor.start(async { SystemInfo::get_system_info() });
+            }
+        }
+        AsyncTaskStatus::Pending => {}
+        AsyncTaskStatus::Finished(info) => {
+            system_info.info = info;
+            system_info.last_refresh = std::time::Instant::now();
+        }
+    }
+}
+
 fn update(
     diagnostics: Res<DiagnosticsStore>,
     mut system_info: ResMut<SystemInfoData>,
@@ -65,12 +85,6 @@ fn update(
     let fps = diagnostics
         .get(&FrameTimeDiagnosticsPlugin::FPS)
         .and_then(|fps| fps.average());
-
-    // Check if the system information needs to be updated (every 2 seconds)
-    if system_info.last_refresh.elapsed().as_secs() > 2 {
-        system_info.info = SystemInfo::get_system_info();
-        system_info.last_refresh = std::time::Instant::now();
-    }
 
     for mut text in query.iter_mut() {
         text.sections[2].value = format!(

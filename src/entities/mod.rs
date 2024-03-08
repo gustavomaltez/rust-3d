@@ -40,8 +40,8 @@ fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>)
 }
 
 fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
-    for x in -15..15 {
-        for z in -15..15 {
+    for x in -4..6 {
+        for z in -4..6 {
             if rand::thread_rng().gen_bool(0.3) {
                 block::spawn(
                     &mut commands,

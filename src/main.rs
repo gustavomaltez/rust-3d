@@ -23,18 +23,15 @@ use light::LightPlugin;
 use player::PlayerPlugin;
 
 // ToDo:
-// -> Retire 'oentity' module
+
 // -> Add logic to enable/disable debug mode
 // -> Figure out a way to get processor temperature
-// -> Move system info logic to a separate thread
 // -> Add logic to only render the blocks that are visible to the camera
 // -> Fix issues on player rotation (it needs to always looks at the mouse)
 // -> Try to improve the day/night cycle
-// -> Improve abstraction to handle entities
 // -> Improve animation logic
 // -> Add logic to zoom in/out the camera with the mouse wheel
 // -> Improve system info logic (fail gracefully), handle AMD gpus.
-// To Run -> cargo watch -c -x run
 
 fn main() {
     App::new()
