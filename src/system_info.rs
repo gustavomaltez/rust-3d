@@ -66,7 +66,10 @@ impl SystemInfo {
             memory: MemoryInfo {
                 used: memory_info.used / 1024 / 1024,
                 total: memory_info.total / 1024 / 1024,
-                percentage: Self::calculate_memory_percentage(memory_info.used, memory_info.total),
+                percentage: Self::calculate_memory_percentage(
+                    memory_info.used,
+                    memory_info.total,
+                ),
             },
         }
     }
@@ -79,7 +82,10 @@ impl SystemInfo {
         MemoryInfo {
             used: used_memory / 1024 / 1024,
             total: total_memory / 1024 / 1024,
-            percentage: Self::calculate_memory_percentage(used_memory, total_memory),
+            percentage: Self::calculate_memory_percentage(
+                used_memory,
+                total_memory,
+            ),
         }
     }
 

@@ -47,7 +47,10 @@ fn update_state(
     for (camera, global_transform) in camera_query.iter() {
         // Get the 3D ray from the camera to the mouse position
         let ray = camera
-            .viewport_to_world(global_transform, input_data.mouse_position.source)
+            .viewport_to_world(
+                global_transform,
+                input_data.mouse_position.source,
+            )
             .expect(
                 "InputPlugin :: update_state :: Unable to get ray from camera 
                 to mouse position: For some reason the ray from the camera to 

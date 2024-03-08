@@ -24,7 +24,12 @@ pub enum Animation {
 
 // Helpers ---------------------------------------------------------------------
 
-pub fn spawn<T: Bundle>(commands: &mut Commands, resources: &Resources, entity: Entity, bundle: T) {
+pub fn spawn<T: Bundle>(
+    commands: &mut Commands,
+    resources: &Resources,
+    entity: Entity,
+    bundle: T,
+) {
     commands.spawn((
         SceneBundle {
             scene: get_model(&entity.variant, resources),
@@ -89,9 +94,12 @@ pub fn get_animation(
     resources: &Resources,
 ) -> Handle<AnimationClip> {
     match ANIMATIONS.iter().find(|animation_data| {
-        animation_data.variant == *variant && animation_data.animation == *animation
+        animation_data.variant == *variant
+            && animation_data.animation == *animation
     }) {
-        Some(animation) => core_get_animation(animation.path.to_string(), resources),
+        Some(animation) => {
+            core_get_animation(animation.path.to_string(), resources)
+        }
         None => panic!("Error while loading animation"),
     }
 }

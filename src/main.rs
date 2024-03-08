@@ -10,7 +10,9 @@ mod system_info;
 
 use bevy::{
     prelude::*,
-    window::{PresentMode, WindowLevel, WindowMode, WindowPosition, WindowResolution},
+    window::{
+        PresentMode, WindowLevel, WindowMode, WindowPosition, WindowResolution,
+    },
 };
 
 use animation::AnimationPlugin;
@@ -45,7 +47,7 @@ fn main() {
             }),
             ..default()
         }),))
-        // .add_plugins(WorldInspectorPlugin::new())
+        .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
         .add_plugins(PlayerPlugin)

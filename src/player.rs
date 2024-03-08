@@ -44,7 +44,8 @@ fn player_movement(
 ) {
     for (mut transform, mut animated) in query.iter_mut() {
         // Rotate the player to look at the mouse position
-        let difference = input_data.mouse_position.coordinates - transform.translation;
+        let difference =
+            input_data.mouse_position.coordinates - transform.translation;
         let angle = f32::atan2(difference.x, difference.z);
         transform.rotation = Quat::from_rotation_y(angle);
 
@@ -58,10 +59,18 @@ fn player_movement(
             Some(key) => {
                 is_walking = true;
                 match key {
-                    KeyCode::KeyW => translation_offset += rotation.mul_vec3(Vec3::Z),
-                    KeyCode::KeyS => translation_offset -= rotation.mul_vec3(Vec3::Z),
-                    KeyCode::KeyA => translation_offset += rotation.mul_vec3(Vec3::X),
-                    KeyCode::KeyD => translation_offset -= rotation.mul_vec3(Vec3::X),
+                    KeyCode::KeyW => {
+                        translation_offset += rotation.mul_vec3(Vec3::Z)
+                    }
+                    KeyCode::KeyS => {
+                        translation_offset -= rotation.mul_vec3(Vec3::Z)
+                    }
+                    KeyCode::KeyA => {
+                        translation_offset += rotation.mul_vec3(Vec3::X)
+                    }
+                    KeyCode::KeyD => {
+                        translation_offset -= rotation.mul_vec3(Vec3::X)
+                    }
                     _ => {}
                 }
             }

@@ -44,7 +44,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
     commands.spawn(
         TextBundle::from_sections([
-            TextSection::new("Genesys Ultimate [v0.0.0] (dev)\n", style.clone()),
+            TextSection::new(
+                "Genesys Ultimate [v0.0.0] (dev)\n",
+                style.clone(),
+            ),
             TextSection::new("Copyright 2024 GMALTEZ CORP \n", style.clone()),
             TextSection::from_style(style.clone()),
             TextSection::from_style(style.clone()),
@@ -94,8 +97,10 @@ fn update(
             system_info.info.gpu.usage,
             system_info.info.gpu.temperature
         );
-        text.sections[3].value = format!("\nCPU: {}", system_info.info.cpu.name);
-        text.sections[4].value = format!("\nGPU: {}", system_info.info.gpu.name);
+        text.sections[3].value =
+            format!("\nCPU: {}", system_info.info.cpu.name);
+        text.sections[4].value =
+            format!("\nGPU: {}", system_info.info.gpu.name);
         text.sections[5].value = format!(
             "\nGPU Memory: {}/{}MB ({:.0}%)",
             system_info.info.gpu.memory.used,

@@ -33,7 +33,10 @@ impl Plugin for EntityPlugin {
     }
 }
 
-fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>) {
+fn load_assets(
+    mut resources: ResMut<Resources>,
+    asset_server: Res<AssetServer>,
+) {
     block::load_assets(&mut resources, &asset_server);
     character::load_assets(&mut resources, &asset_server);
     vegetation::load_assets(&mut resources, &asset_server);
@@ -70,7 +73,7 @@ fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
                             },
                         );
                     }
-                } else if rand::thread_rng().gen_bool(0.1) {
+                } else if rand::thread_rng().gen_bool(0.01) {
                     vegetation::spawn(
                         &mut commands,
                         &resources,
@@ -112,7 +115,11 @@ fn get_model(path: String, resources: &Resources) -> Handle<Scene> {
     }
 }
 
-fn load_model(path: String, resources: &mut Resources, asset_server: &Res<AssetServer>) {
+fn load_model(
+    path: String,
+    resources: &mut Resources,
+    asset_server: &Res<AssetServer>,
+) {
     if resources.models.contains_key(&path) {
         panic!("Model already loaded: {}", path);
     }
@@ -121,7 +128,11 @@ fn load_model(path: String, resources: &mut Resources, asset_server: &Res<AssetS
         .insert(path.clone(), asset_server.load(path));
 }
 
-fn load_animation(path: String, resources: &mut Resources, asset_server: &Res<AssetServer>) {
+fn load_animation(
+    path: String,
+    resources: &mut Resources,
+    asset_server: &Res<AssetServer>,
+) {
     if resources.animations.contains_key(&path) {
         panic!("Animation already loaded: {}", path);
     }

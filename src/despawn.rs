@@ -19,7 +19,6 @@ fn despawn(
     >,
 ) {
     for (entity, transform) in query.iter() {
-        println!("Despawning entity: {:?}", entity);
         let distance = transform.translation().distance(Vec3::ZERO);
 
         for (_, camera_transform) in camera_query.iter() {
