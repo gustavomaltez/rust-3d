@@ -15,10 +15,11 @@ fn despawn(
     camera_query: Query<(&Camera, &GlobalTransform)>,
     query: Query<
         (Entity, &GlobalTransform),
-        Or<(With<block::Entity>, With<vegetation::Entity>)>,
+        Or<(Added<block::Entity>, Added<vegetation::Entity>)>,
     >,
 ) {
     for (entity, transform) in query.iter() {
+        println!("Despawning entity: {:?}", entity);
         let distance = transform.translation().distance(Vec3::ZERO);
 
         for (_, camera_transform) in camera_query.iter() {
