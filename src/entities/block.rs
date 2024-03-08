@@ -3,6 +3,7 @@ use super::*;
 
 // Core ------------------------------------------------------------------------
 
+#[derive(Component)]
 pub struct Entity {
     pub coordinates: IVec3,
     pub variant: Variant,
@@ -17,15 +18,18 @@ pub enum Variant {
 // Helpers ---------------------------------------------------------------------
 
 pub fn spawn(commands: &mut Commands, resources: &Resources, entity: Entity) {
-    commands.spawn(SceneBundle {
-        scene: get_model(&entity.variant, resources),
-        transform: Transform {
-            translation: entity.coordinates.as_vec3(),
-            scale: Vec3::splat(0.5),
+    commands.spawn((
+        SceneBundle {
+            scene: get_model(&entity.variant, resources),
+            transform: Transform {
+                translation: entity.coordinates.as_vec3(),
+                scale: Vec3::splat(0.5),
+                ..Default::default()
+            },
             ..Default::default()
         },
-        ..Default::default()
-    });
+        entity,
+    ));
 }
 
 // Variants & Animations -------------------------------------------------------

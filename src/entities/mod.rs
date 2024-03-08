@@ -40,8 +40,8 @@ fn load_assets(mut resources: ResMut<Resources>, asset_server: Res<AssetServer>)
 }
 
 fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
-    for x in -4..6 {
-        for z in -4..6 {
+    for x in -30..30 {
+        for z in -30..30 {
             if rand::thread_rng().gen_bool(0.3) {
                 block::spawn(
                     &mut commands,
@@ -57,10 +57,20 @@ fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
                         &resources,
                         vegetation::Entity {
                             coordinates: IVec3 { x, y: 1, z },
-                            variant: vegetation::Variant::Corn,
+                            variant: vegetation::Variant::Bamboo,
                         },
                     );
-                } else if rand::thread_rng().gen_bool(0.05) {
+                    if rand::thread_rng().gen_bool(0.5) {
+                        vegetation::spawn(
+                            &mut commands,
+                            &resources,
+                            vegetation::Entity {
+                                coordinates: IVec3 { x, y: 2, z },
+                                variant: vegetation::Variant::Bamboo,
+                            },
+                        );
+                    }
+                } else if rand::thread_rng().gen_bool(0.1) {
                     vegetation::spawn(
                         &mut commands,
                         &resources,
@@ -70,14 +80,14 @@ fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
                         },
                     );
                 } else {
-                    vegetation::spawn(
-                        &mut commands,
-                        &resources,
-                        vegetation::Entity {
-                            coordinates: IVec3 { x, y: 1, z },
-                            variant: vegetation::Variant::Grass,
-                        },
-                    );
+                    // vegetation::spawn(
+                    //     &mut commands,
+                    //     &resources,
+                    //     vegetation::Entity {
+                    //         coordinates: IVec3 { x, y: 1, z },
+                    //         variant: vegetation::Variant::Grass,
+                    //     },
+                    // );
                 }
             } else {
                 block::spawn(
@@ -88,16 +98,6 @@ fn spawn_world(mut commands: Commands, resources: Res<Resources>) {
                         variant: block::Variant::Grass,
                     },
                 );
-                if rand::thread_rng().gen_bool(0.4) {
-                    vegetation::spawn(
-                        &mut commands,
-                        &resources,
-                        vegetation::Entity {
-                            coordinates: IVec3 { x, y: 1, z },
-                            variant: vegetation::Variant::Grass,
-                        },
-                    );
-                }
             }
         }
     }

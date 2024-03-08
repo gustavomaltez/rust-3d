@@ -1,7 +1,7 @@
 mod animation;
 mod camera;
 mod debug;
-
+mod despawn;
 mod entities;
 mod input;
 mod light;
@@ -14,16 +14,16 @@ use bevy::{
 };
 
 use animation::AnimationPlugin;
-// use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
+use despawn::DespawnPlugin;
 use entities::EntityPlugin;
 use input::InputPlugin;
 use light::LightPlugin;
 use player::PlayerPlugin;
 
 // ToDo (sorted by priority):
-// -> Render only visible blocks
 // -> Improve animation logic
 // -> Improve the day/night cycle
 // -> Fix issues on player rotation (it needs to always looks at the mouse)
@@ -53,5 +53,6 @@ fn main() {
         .add_plugins(AnimationPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(InputPlugin)
+        .add_plugins(DespawnPlugin)
         .run();
 }
