@@ -16,7 +16,7 @@ use bevy::{
 };
 
 use animation::AnimationPlugin;
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
+// use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
 use despawn::DespawnPlugin;
@@ -41,13 +41,13 @@ fn main() {
                 title: "Genesys Ultimate".into(),
                 present_mode: PresentMode::AutoVsync,
                 window_level: WindowLevel::AlwaysOnTop,
-                position: WindowPosition::At(IVec2::new(1710, 0)),
-                resolution: WindowResolution::new(850., 500.),
+                position: WindowPosition::At(IVec2::new(-1085, -160)),
+                resolution: WindowResolution::new(1075., 610.),
                 ..default()
             }),
             ..default()
         }),))
-        .add_plugins(WorldInspectorPlugin::new())
+        // .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(CameraPlugin)
         .add_plugins(LightPlugin)
         .add_plugins(PlayerPlugin)

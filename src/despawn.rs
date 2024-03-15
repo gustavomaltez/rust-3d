@@ -1,6 +1,5 @@
 use crate::entities::entity::{block, vegetation};
-
-use bevy::{prelude::*, render::view::window};
+use bevy::prelude::*;
 
 pub struct DespawnPlugin;
 
@@ -24,7 +23,7 @@ fn despawn(
         for (_, camera_transform) in camera_query.iter() {
             let camera_distance =
                 camera_transform.translation().distance(Vec3::ZERO);
-            if (distance > camera_distance) {
+            if distance > camera_distance {
                 commands.entity(entity).despawn_recursive();
             }
         }

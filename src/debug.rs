@@ -80,7 +80,7 @@ fn refresh_system_info(
 
 fn update(
     diagnostics: Res<DiagnosticsStore>,
-    mut system_info: ResMut<SystemInfoData>,
+    system_info: ResMut<SystemInfoData>,
     input_data: Res<InputData>,
     mut gizmos: Gizmos,
     mut query: Query<&mut Text>,
